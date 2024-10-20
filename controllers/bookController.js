@@ -2,7 +2,6 @@ const Book = require("./../models/Book")
 
 exports.create = async (req, res) => {
     
-    // Del formulario, creamos variables y asignamos valores
     const { 
         title,
         price,
@@ -11,7 +10,7 @@ exports.create = async (req, res) => {
         description
     } = req.body
 
-    // Crear un libro en base de datos
+    // Create a book in db
     try {
         const newBook = await Book.create({
             title,
@@ -20,7 +19,7 @@ exports.create = async (req, res) => {
             image,
             description
         })
-    // Devolver una respuesta en un formato JSON
+      // Return a successful response in JSON format
         res.json({
             msg: "Libro creado con exito",
             data: newBook
