@@ -5,7 +5,7 @@ exports.create = async (req, res) => {
     const { 
         items, 
         customer
-    } = req.body
+    } = req.body.order
 
 
 
