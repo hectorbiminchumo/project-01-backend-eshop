@@ -22,6 +22,14 @@ const bookSchema = mongoose.Schema({
     description: {
         type: String,
         required: true
+    },
+    priceID: {
+        type: String,
+        required: true
+    },
+    productID: {
+        type: String,
+        required: true
     }
 
 })

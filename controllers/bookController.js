@@ -1,7 +1,8 @@
 const Book = require("./../models/Book")
+const stripe = require('stripe')(process.env.STRIPE_KEY)
 
 exports.create = async (req, res) => {
-    
+
     const { 
         title,
         price,
@@ -9,28 +10,41 @@ exports.create = async (req, res) => {
         image,
         description
     } = req.body
+    
+    // STRIPE
+     const newProductStripe = await stripe.products.create({
+        name: title,
+        description: description,
+        images: [image]
+     })
+     console.log(newProductStripe);
+     
 
-    // Create a book in db
-    try {
-        const newBook = await Book.create({
-            title,
-            price,
-            pages,
-            image,
-            description
-        })
-      // Return a successful response in JSON format
-        res.json({
-            msg: "Libro creado con exito",
-            data: newBook
-        })
 
-    } catch (error) {
-        res.status(500).json({
-            msg: "Hubo un error creando el libro",
-            error: error
-        })
-    }
+
+    // MONGODB
+
+    // // Create a book in db
+    // try {
+    //     const newBook = await Book.create({
+    //         title,
+    //         price,
+    //         pages,
+    //         image,
+    //         description
+    //     })
+    //   // Return a successful response in JSON format
+    //     res.json({
+    //         msg: "Libro creado con exito",
+    //         data: newBook
+    //     })
+
+    // } catch (error) {
+    //     res.status(500).json({
+    //         msg: "Hubo un error creando el libro",
+    //         error: error
+    //     })
+    // }
     
 }
 exports.readAll = async (req, res) => {
