@@ -5,9 +5,10 @@ exports.create = async (req, res) => {
 
     const { 
         title,
-        price,
         pages,
         image,
+        priceID,
+        price,
         description
     } = req.body
     
@@ -18,20 +19,31 @@ exports.create = async (req, res) => {
         images: [image]
      })
      console.log(newProductStripe);
-     
 
+     // NEW PRICE
+     const newProductStripeID = newProductStripe.id
+     const newProductStripeName = newProductStripe.name
+     const newProductStripeDescription = newProductStripe.description
+     const priceStripe = await stripe.prices.create({
+        unit_amount: price,
+        currency: 'usd',
+        product: newProductStripeID,
+        nickname: newProductStripeDescription
+     });
 
 
     // MONGODB
 
-    // // Create a book in db
+    // Create a book in db
     // try {
     //     const newBook = await Book.create({
-    //         title,
+    //         title: newProductStripeName,
     //         price,
     //         pages,
     //         image,
-    //         description
+    //         description,
+    //         priceID,
+    //         productID
     //     })
     //   // Return a successful response in JSON format
     //     res.json({
