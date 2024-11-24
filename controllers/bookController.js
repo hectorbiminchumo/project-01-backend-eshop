@@ -28,14 +28,13 @@ exports.create = async (req, res) => {
      const newProductStripeDescription = newProductStripe.description
      const newProductStripePages = newProductStripe.metadata.pages
      const priceStripe = await stripe.prices.create({
-         unit_amount: price,
+         unit_amount: (price*100),
          currency: 'usd',
          product: newProductStripeID,
          nickname: newProductStripeDescription
         });
         
         const newProductPriceID = priceStripe.id
-        const newProductPrice = priceStripe.unit_amount
 
 
     // MONGODB
@@ -48,7 +47,7 @@ exports.create = async (req, res) => {
             description: newProductStripeDescription,
             priceID: newProductPriceID,
             productID: newProductStripeID,
-            price: newProductPrice,
+            price: price,
             image: image,
         })
         
