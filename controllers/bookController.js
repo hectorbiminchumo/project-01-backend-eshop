@@ -7,7 +7,6 @@ exports.create = async (req, res) => {
         title,
         pages,
         image,
-        priceID,
         price,
         description
     } = req.body
@@ -16,7 +15,10 @@ exports.create = async (req, res) => {
      const newProductStripe = await stripe.products.create({
         name: title,
         description: description,
-        images: [image]
+        images: [image],
+        metadata: {
+            "pages": pages
+        }
      })
      console.log(newProductStripe);
 
@@ -24,39 +26,44 @@ exports.create = async (req, res) => {
      const newProductStripeID = newProductStripe.id
      const newProductStripeName = newProductStripe.name
      const newProductStripeDescription = newProductStripe.description
+     const newProductStripePages = newProductStripe.metadata.pages
      const priceStripe = await stripe.prices.create({
-        unit_amount: price,
-        currency: 'usd',
-        product: newProductStripeID,
-        nickname: newProductStripeDescription
-     });
+         unit_amount: price,
+         currency: 'usd',
+         product: newProductStripeID,
+         nickname: newProductStripeDescription
+        });
+        
+        const newProductPriceID = priceStripe.id
+        const newProductPrice = priceStripe.unit_amount
 
 
     // MONGODB
 
     // Create a book in db
-    // try {
-    //     const newBook = await Book.create({
-    //         title: newProductStripeName,
-    //         price,
-    //         pages,
-    //         image,
-    //         description,
-    //         priceID,
-    //         productID
-    //     })
-    //   // Return a successful response in JSON format
-    //     res.json({
-    //         msg: "Libro creado con exito",
-    //         data: newBook
-    //     })
+    try {
+        const newBook = await Book.create({
+            title: newProductStripeName,
+            pages: newProductStripePages,
+            description: newProductStripeDescription,
+            priceID: newProductPriceID,
+            productID: newProductStripeID,
+            price: newProductPrice,
+            image: image,
+        })
+        
+      // Return a successful response in JSON format
+        res.json({
+            msg: "Libro creado con exito",
+            data: newBook
+        })
 
-    // } catch (error) {
-    //     res.status(500).json({
-    //         msg: "Hubo un error creando el libro",
-    //         error: error
-    //     })
-    // }
+    } catch (error) {
+        res.status(500).json({
+            msg: "Hubo un error creando el libro",
+            error: error
+        })
+    }
     
 }
 exports.readAll = async (req, res) => {
