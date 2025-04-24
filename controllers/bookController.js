@@ -1,24 +1,55 @@
 const Book = require("./../models/Book")
+const stripe = require('stripe')(process.env.STRIPE_KEY)
 
 exports.create = async (req, res) => {
-    
+
     const { 
         title,
-        price,
         pages,
         image,
+        price,
         description
     } = req.body
+    
+    // STRIPE
+     const newProductStripe = await stripe.products.create({
+        name: title,
+        description: description,
+        images: [image],
+        metadata: {
+            "pages": pages
+        }
+     })
+
+     // NEW PRICE
+     const newProductStripeID = newProductStripe.id
+     const newProductStripeName = newProductStripe.name
+     const newProductStripeDescription = newProductStripe.description
+     const newProductStripePages = newProductStripe.metadata.pages
+     const priceStripe = await stripe.prices.create({
+         unit_amount: (price*100),
+         currency: 'usd',
+         product: newProductStripeID,
+         nickname: newProductStripeDescription
+        });
+        
+        const newProductPriceID = priceStripe.id
+
+
+    // MONGODB
 
     // Create a book in db
     try {
         const newBook = await Book.create({
-            title,
-            price,
-            pages,
-            image,
-            description
+            title: newProductStripeName,
+            pages: newProductStripePages,
+            description: newProductStripeDescription,
+            priceID: newProductPriceID,
+            productID: newProductStripeID,
+            price: price,
+            image: image,
         })
+        
       // Return a successful response in JSON format
         res.json({
             msg: "Libro creado con exito",
