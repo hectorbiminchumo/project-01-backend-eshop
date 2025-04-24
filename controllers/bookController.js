@@ -20,7 +20,6 @@ exports.create = async (req, res) => {
             "pages": pages
         }
      })
-     console.log(newProductStripe);
 
      // NEW PRICE
      const newProductStripeID = newProductStripe.id
