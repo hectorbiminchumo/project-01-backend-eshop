@@ -21,6 +21,7 @@ app.use(express.json())
 app.use("/books", require("./routes/books"))
 app.use("/orders", require("./routes/orders"))
 app.use("/api/checkout", require("./routes/checkout"))
+app.use("/users", require("./routes/users"))
 
 // 4. Server
 app.listen(process.env.PORT, () => {
